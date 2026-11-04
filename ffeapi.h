@@ -15,52 +15,61 @@ extern "C" {
 #define __CONFIGFILE__ "ffewinsdl.cfg"
 #endif
 
+#ifdef __FFEWIN64__
+#define __CONFIGFILE__ "ffewin64.cfg"
+#endif
+
 #ifndef __CONFIGFILE__
 #error Unknown version: Config file not set
 #endif
 
+/* Fixed-size types: the recompiled core passes 32-bit values, and 'long'
+ * is 64-bit on LP64 hosts (Linux) but 32-bit on Windows x64. */
+#include <stdint.h>
 
+#ifndef _WINDEF_
 typedef unsigned char UCHAR;
 typedef unsigned short USHORT;
-typedef unsigned long ULONG;
+#endif
+typedef uint32_t FFE_ULONG;
 
 void SystemInit (void);
 void SystemCleanup (void);
 
-void VideoBlit (UCHAR *pData, long x, long y, long w, long h, long jump);
-void VideoMaskedBlit (UCHAR *pData, long x, long y, long w, long h, long jump);
-void VideoReverseBlit (UCHAR *pData, long x, long y, long w, long h, long jump);
-void VideoGetPalValue (long palindex, UCHAR *pVal);
-void VideoSetPalValue (long palindex, UCHAR *pVal);
-long VideoPointerExclusive (void);
+void VideoBlit (uint8_t *pData, int32_t x, int32_t y, int32_t w, int32_t h, int32_t jump);
+void VideoMaskedBlit (uint8_t *pData, int32_t x, int32_t y, int32_t w, int32_t h, int32_t jump);
+void VideoReverseBlit (uint8_t *pData, int32_t x, int32_t y, int32_t w, int32_t h, int32_t jump);
+void VideoGetPalValue (int32_t palindex, uint8_t *pVal);
+void VideoSetPalValue (int32_t palindex, uint8_t *pVal);
+int32_t VideoPointerExclusive (void);
 void VideoPointerEnable (void);
 void VideoPointerDisable (void);
 
-long InputMouseReadButtons (void);
-void InputMouseReadMickeys (long *pXMick, long *pYMick);
-void InputMouseReadPos (long *pXPos, long *pYPos);
+int32_t InputMouseReadButtons (void);
+void InputMouseReadMickeys (int32_t *pXMick, int32_t *pYMick);
+void InputMouseReadPos (int32_t *pXPos, int32_t *pYPos);
 
-void InputJoyReadPos (long *pXPos, long *pYPos);
-long InputJoyReadButtons (void);
+void InputJoyReadPos (int32_t *pXPos, int32_t *pYPos);
+int32_t InputJoyReadButtons (void);
 
-void InputKeybReadStates (UCHAR *pKeyArray);
-long InputKeybGetLastKey (void);
-void InputKeybSetLastKey (long);
+void InputKeybReadStates (uint8_t *pKeyArray);
+int32_t InputKeybGetLastKey (void);
+void InputKeybSetLastKey (int32_t);
 
-ULONG TimerGetTimeStamp (void);
+uint32_t TimerGetTimeStamp (void);
 void TimerSleep (void);
 void TimerFrameUpdate (void);
 
-void SoundCheckInit (long *pAll, long *pDigi, long *pMidi);
-void SoundPlaySong (long index);
+void SoundCheckInit (int32_t *pAll, int32_t *pDigi, int32_t *pMidi);
+void SoundPlaySong (int32_t index);
 void SoundStopSong (void);
-long SoundSongDone (void);
+int32_t SoundSongDone (void);
 void SoundStopAllSamples (void);
-void SoundPlaySample (long index, long vol, long pitch);
+void SoundPlaySample (int32_t index, int32_t vol, int32_t pitch);
 
-long SoundStreamGetUsedBlocks (void);
+int32_t SoundStreamGetUsedBlocks (void);
 void SoundStreamReset (void);
-void SoundStreamAddBlock (void *pData, long size);
+void SoundStreamAddBlock (void *pData, int32_t size);
 void SoundStreamStart (void);
 void SoundStreamWait (void);
 void SoundStreamStop (void);
