@@ -42,7 +42,7 @@ convention don't exist in x64. So:
 5. **`third_party/`** – Khronos **Vulkan-Headers 1.4.309** and the **volk**
    loader (vendored, Apache-2.0 / MIT licences).
 
-The original 32-bit files (`win32/`, `sdl/`, `*.dsp`) are kept for reference.
+There is no OpenGL anywhere: the old SDL 1.2 + OpenGL backend (`sdl/`, `ffelnxsdl.mak`, `jjffesdl.dsp`) has been removed and Vulkan is the only renderer. The original 32-bit DirectX files (`win32/`, `jjffew32.dsp`) are kept for reference only and are not built.
 
 ## Building
 
