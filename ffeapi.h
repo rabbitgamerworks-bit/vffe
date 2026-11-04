@@ -18,6 +18,9 @@ extern "C" {
 #ifdef __FFEWIN64__
 #define __CONFIGFILE__ "ffewin64.cfg"
 #endif
+#ifdef __FFESDL2__
+#define __CONFIGFILE__ "ffesdl2.cfg"
+#endif
 
 #ifndef __CONFIGFILE__
 #error Unknown version: Config file not set

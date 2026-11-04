@@ -4,8 +4,8 @@
 
 #include "ffecfg.h"
 
-#ifdef WIN32
-#define strcasecmp stricmp
+#if defined(_WIN32) && !defined(strcasecmp)
+#define strcasecmp _stricmp
 #endif
 
 // Initialises file filename into cfg

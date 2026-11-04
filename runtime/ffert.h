@@ -51,6 +51,9 @@ FFE_INLINE void WRF64(uint32_t a, double d) { memcpy(g_mem + a, &d, 8); }
 /* Guest <-> host pointer conversion */
 #define HP(a)  ((a) ? (void *)(g_mem + (uint32_t)(a)) : (void *)0)
 #define HPC(a) ((char *)HP(a))
+/* non-null variant for libc calls that require valid pointers */
+#define HPN(a) ((void *)(g_mem + (uint32_t)(a)))
+#define HPNC(a) ((char *)HPN(a))
 uint32_t GP(const void *p);   /* host pointer inside g_mem -> guest addr */
 
 /* ------------------------------------------------------------------ */

@@ -302,18 +302,18 @@ static FILE *hfile(uint32_t h)
 #define RETV() do { esp += 4u; return; } while (0)
 
 /* --- libc --- */
-THUNK(memcpy)  { memcpy(HP(ARG(0)), HP(ARG(1)), ARG(2)); RET(ARG(0)); }
-THUNK(memmove) { memmove(HP(ARG(0)), HP(ARG(1)), ARG(2)); RET(ARG(0)); }
-THUNK(memset)  { memset(HP(ARG(0)), (int)ARG(1), ARG(2)); RET(ARG(0)); }
-THUNK(strcat)  { strcat(HPC(ARG(0)), HPC(ARG(1))); RET(ARG(0)); }
-THUNK(strcpy)  { strcpy(HPC(ARG(0)), HPC(ARG(1))); RET(ARG(0)); }
-THUNK(strncat) { strncat(HPC(ARG(0)), HPC(ARG(1)), ARG(2)); RET(ARG(0)); }
-THUNK(strlen)  { RET(strlen(HPC(ARG(0)))); }
-THUNK(strcmp)  { RET((uint32_t)strcmp(HPC(ARG(0)), HPC(ARG(1)))); }
-THUNK(strrchr) { char *p = strrchr(HPC(ARG(0)), (int)ARG(1)); RET(p ? GP(p) : 0); }
+THUNK(memcpy)  { memcpy(HPN(ARG(0)), HPN(ARG(1)), ARG(2)); RET(ARG(0)); }
+THUNK(memmove) { memmove(HPN(ARG(0)), HPN(ARG(1)), ARG(2)); RET(ARG(0)); }
+THUNK(memset)  { memset(HPN(ARG(0)), (int)ARG(1), ARG(2)); RET(ARG(0)); }
+THUNK(strcat)  { strcat(HPNC(ARG(0)), HPNC(ARG(1))); RET(ARG(0)); }
+THUNK(strcpy)  { strcpy(HPNC(ARG(0)), HPNC(ARG(1))); RET(ARG(0)); }
+THUNK(strncat) { strncat(HPNC(ARG(0)), HPNC(ARG(1)), ARG(2)); RET(ARG(0)); }
+THUNK(strlen)  { RET(strlen(HPNC(ARG(0)))); }
+THUNK(strcmp)  { RET((uint32_t)strcmp(HPNC(ARG(0)), HPNC(ARG(1)))); }
+THUNK(strrchr) { char *p = strrchr(HPNC(ARG(0)), (int)ARG(1)); RET(p ? GP(p) : 0); }
 THUNK(tolower) { RET((uint32_t)tolower((int)ARG(0))); }
 THUNK(toupper) { RET((uint32_t)toupper((int)ARG(0))); }
-THUNK(atoi)    { RET((uint32_t)atoi(HPC(ARG(0)))); }
+THUNK(atoi)    { RET((uint32_t)atoi(HPNC(ARG(0)))); }
 THUNK(abs)     { int32_t v = (int32_t)ARG(0); RET((uint32_t)(v < 0 ? -v : v)); }
 THUNK(sqrt)    { FPUSH(sqrt(RDF64(esp + 4u))); RETV(); }
 THUNK(malloc)  { RET(guest_malloc(ARG(0))); }
@@ -342,14 +342,14 @@ THUNK(exit)
 
 THUNK(signal) { RET(0); }
 THUNK(system) { RET(0xFFFFFFFFu); }
-THUNK(remove) { RET((uint32_t)remove(HPC(ARG(0)))); }
+THUNK(remove) { RET((uint32_t)remove(HPNC(ARG(0)))); }
 
 THUNK(fopen)
 {
 	int i;
 	for (i = 0; i < MAX_FILES; i++) {
 		if (!files[i]) {
-			files[i] = fopen(HPC(ARG(0)), HPC(ARG(1)));
+			files[i] = fopen(HPNC(ARG(0)), HPNC(ARG(1)));
 			RET(files[i] ? FILE_HANDLE_BASE + (uint32_t)i : 0);
 		}
 	}
@@ -365,8 +365,8 @@ THUNK(fclose)
 	RET((uint32_t)r);
 }
 
-THUNK(fread)  { FILE *f = hfile(ARG(3)); RET(f ? fread(HP(ARG(0)), ARG(1), ARG(2), f) : 0); }
-THUNK(fwrite) { FILE *f = hfile(ARG(3)); RET(f ? fwrite(HP(ARG(0)), ARG(1), ARG(2), f) : 0); }
+THUNK(fread)  { FILE *f = hfile(ARG(3)); RET(f ? fread(HPN(ARG(0)), ARG(1), ARG(2), f) : 0); }
+THUNK(fwrite) { FILE *f = hfile(ARG(3)); RET(f ? fwrite(HPN(ARG(0)), ARG(1), ARG(2), f) : 0); }
 THUNK(fseek)  { FILE *f = hfile(ARG(0)); RET(f ? (uint32_t)fseek(f, (long)(int32_t)ARG(1), (int)ARG(2)) : 0xFFFFFFFFu); }
 THUNK(ftell)  { FILE *f = hfile(ARG(0)); RET(f ? (uint32_t)ftell(f) : 0xFFFFFFFFu); }
 THUNK(fflush) { FILE *f = hfile(ARG(0)); RET((uint32_t)fflush(f)); }
@@ -393,7 +393,7 @@ THUNK(printf)
 THUNK(sprintf)
 {
 	size_t n = guest_vformat(fmtbuf, sizeof fmtbuf, ARG(1), esp + 12u);
-	memcpy(HP(ARG(0)), fmtbuf, n + 1 < sizeof fmtbuf ? n + 1 : sizeof fmtbuf);
+	memcpy(HPN(ARG(0)), fmtbuf, n + 1 < sizeof fmtbuf ? n + 1 : sizeof fmtbuf);
 	RET(n);
 }
 

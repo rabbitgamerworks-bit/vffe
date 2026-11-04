@@ -1,0 +1,50 @@
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  windows-x64-msvc:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure (x64)
+        run: cmake -S . -B build -A x64
+      - name: Build
+        run: cmake --build build --config Release --parallel
+      - name: Package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Copy-Item build/Release/ffewin64.exe dist/
+          Copy-Item ffewin64.cfg dist/
+          Copy-Item README.md dist/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jjffe-win64-vulkan
+          path: dist/
+
+  windows-x64-mingw-cross:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y mingw-w64
+      - run: cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=cmake/mingw-w64-x86_64.cmake
+      - run: cmake --build build --parallel
+      - run: file build/ffewin64.exe | grep -q "PE32+ executable (GUI) x86-64"
+
+  linux-sdl2-vulkan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y libsdl2-dev python3
+      - name: Check that gen/ matches the assembly sources
+        run: |
+          python3 tools/asm2c.py . gen
+          git diff --exit-code --stat gen/
+      - run: cmake -S . -B build -DFFE_HEADLESS_TEST=ON
+      - run: cmake --build build --parallel
+      - name: Headless game test (intro -> alternative start -> in game)
+        run: tests/run_headless.sh build/ffetest

@@ -4,10 +4,12 @@
 //based on HMP converter from the MIDI plug-in
 
 #include <memory.h>
-#include <malloc.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 
 //windoze defines
-typedef unsigned long DWORD;
+typedef uint32_t DWORD;  /* must be 32-bit, also on 64-bit hosts */
 typedef unsigned int UINT;
 typedef unsigned char BYTE;
 typedef int BOOL;
