@@ -5,15 +5,6 @@
 extern "C" {
 #endif
 
-#ifdef __FFELNXSDL__
-#define __CONFIGFILE__ "ffelnxsdl.cfg"
-#endif
-#ifdef __FFEWIN__
-#define __CONFIGFILE__ "ffewin.cfg"
-#endif
-#ifdef __FFEWINSDL__
-#define __CONFIGFILE__ "ffewinsdl.cfg"
-#endif
 
 #ifdef __FFEWIN64__
 #define __CONFIGFILE__ "ffewin64.cfg"
